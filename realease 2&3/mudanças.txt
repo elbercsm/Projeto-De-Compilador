@@ -1,0 +1,4 @@
+-retirar fimsenao
+-fazer o escolha (caso e outro caso)
+**nome do algoritmo tem que ter aspas na linha 1
+**falta declaração de vetor (Não está no LEX, porém há uma sintaxe para tal parser.y linha 481)

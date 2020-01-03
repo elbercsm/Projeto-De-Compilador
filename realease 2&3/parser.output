@@ -1,0 +1,3881 @@
+Terminais sem uso na gramática
+
+   token_strings
+   token_booleans
+   token_ints
+   token_switch
+   token_switch_end
+   token_case
+   token_default
+   token_if_end
+   token_reals
+   token_chars
+   token_aspas
+   token_pt
+   token_hashtag
+   token_chaves_abre
+   token_chaves_fecha
+   token_apost
+   token_cbarra
+
+
+Gramática
+
+    0 $accept: PROG $end
+
+    1 PROG: token_algoritmo token_ident INSERE_INIT token_pt_virg BLOCO
+    2     | token_algoritmo token_ident INSERE_INIT token_pt_virg
+
+    3 INSERE_INIT: %empty
+
+    4 $@1: %empty
+
+    5 BLOCO: DECL_VAR MAIS_FUNCOES $@1 BLOCO_MAIN
+    6      | BLOCO_MAIN
+    7      | DECL_VAR BLOCO_MAIN
+
+    8 $@2: %empty
+
+    9 BLOCO: MAIS_FUNCOES $@2 BLOCO_MAIN
+
+   10 BLOCO_MAIN: token_inicio LISTA_CMD token_fim
+   11           | token_inicio token_fim
+
+   12 DECL_VAR: token_var LISTA_VAR token_var_fim
+   13         | token_var token_var_fim
+
+   14 MAIS_FUNCOES: MAIS_FUNCOES DECL_FUNC token_func_fim
+   15             | DECL_FUNC token_func_fim
+   16             | MAIS_FUNCOES DECL_FUNC token_proc_fim
+   17             | DECL_FUNC token_proc_fim
+
+   18 LISTA_VAR: LISTA_VAR REC_IDENT token_dois_pt TIPO COD1 token_pt_virg
+   19          | REC_IDENT token_dois_pt TIPO COD1 token_pt_virg
+
+   20 COD1: %empty
+
+   21 REC_IDENT: REC_IDENT token_virg token_ident
+   22          | token_ident
+
+   23 BLOCO_FUNC: DECL_VAR BLOCO_MAIN
+   24           | BLOCO_MAIN
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC
+   26          | token_proc token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg BLOCO_FUNC
+   27          | token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg
+   28          | token_proc token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg
+
+   29 STRCPY_FUNC: %empty
+
+   30 INSERE_FUNC_TAB: %empty
+
+   31 INSERE_PROC_TAB: %empty
+
+   32 PARAMETROS: token_abreParen LISTA_PARAM token_fechaParen
+   33           | token_abreParen token_fechaParen
+
+   34 LISTA_PARAM: LISTA_PARAM token_virg token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+   35            | token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+
+   36 INSERE_VAR_LISTAPARAM: %empty
+
+   37 INSERE_LISTAPARAM_HASH: %empty
+
+   38 LISTA_CMD: LISTA_CMD CMD
+   39          | CMD
+
+   40 CMD: CMD_WHILE
+   41    | CMD_DO_WHILE
+   42    | CMD_FOR
+   43    | CMD_SIMPLES token_pt_virg
+   44    | CMD_REPEAT
+   45    | CMD_IF
+
+   46 CMD_IF: token_if EXPRESSAO token_then LISTA_CMD token_then_end
+   47       | token_if EXPRESSAO token_then LISTA_CMD token_then_end token_else LISTA_CMD token_else_end
+
+   48 CMD_DO_WHILE: token_do LISTA_CMD token_do_end token_while EXPRESSAO
+
+   49 CMD_REPEAT: token_repeat LISTA_CMD token_ate EXPRESSAO
+
+   50 CMD_WHILE: token_while EXPRESSAO token_do LISTA_CMD token_while_end
+   51          | token_while EXPRESSAO token_do token_while_end
+
+   52 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do LISTA_CMD token_for_end
+   53        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end
+   54        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do token_for_end
+   55        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do token_for_end
+
+   56 IDENT_OU_INT: TK_IDENT
+   57             | token_vlr_inteiro
+   58             | token_menos token_vlr_inteiro
+
+   59 CMD_SIMPLES: ATRIB
+   60            | CHAMADA_FUNCAO
+   61            | CMD_IMPRIMA
+   62            | CMD_LEIA
+   63            | CMD_MINIMO
+   64            | CMD_MAXIMO
+   65            | CMD_CENTRAL
+   66            | RETURN
+   67            | OP_INCR
+
+   68 $@3: %empty
+
+   69 ATRIB: IDENTS $@3 token_atrib VALOR
+
+   70 IDENTS: IDENTS token_virg TK_IDENT
+   71       | TK_IDENT
+
+   72 $@4: %empty
+
+   73 CMD_IMPRIMA: token_print token_abreParen ARG $@4 token_fechaParen
+
+   74 $@5: %empty
+
+   75 ARG: ARG token_virg $@5 VALOR VERIFICA_VAR_DECLARADA
+
+   76 $@6: %empty
+
+   77 ARG: $@6 VALOR VERIFICA_VAR_DECLARADA
+
+   78 VERIFICA_VAR_DECLARADA: %empty
+
+   79 CMD_LEIA: token_read token_abreParen token_fechaParen
+   80         | token_read token_abreParen token_ident token_fechaParen
+
+   81 CMD_CENTRAL: token_central token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+   82 IDENT_OU_NUM: IDENT_OU_INT
+   83             | token_vlr_real
+   84             | token_menos token_vlr_real
+
+   85 CMD_MINIMO: token_minimo token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+   86 CMD_MAXIMO: token_maximo token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+   87 RETURN: token_return EXPRESSAO
+
+   88 STRCPY_IDENT: token_ident
+
+   89 $@7: %empty
+
+   90 CHAMADA_FUNCAO: STRCPY_IDENT token_abreParen ARG $@7 token_fechaParen
+   91               | STRCPY_IDENT token_abreParen token_fechaParen
+
+   92 TIPO: TIPO_PRIM
+   93     | MATRIZ
+
+   94 MATRIZ: token_matriz T_MAT token_de TIPO_PRIM
+
+   95 $@8: %empty
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@8 token_colchete_fecha
+   97      | token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha
+
+   98 SALVAR_M: %empty
+
+   99 TIPO_PRIM: token_int
+  100          | token_char
+  101          | token_string
+  102          | token_real
+  103          | token_boolean
+
+  104 VALOR: EXPRESSAO
+  105      | TK_VLR_LITERAL
+
+  106 EXPRESSAO: RESETA_PILHAS EXPRESSAO_ARIT OP_COMPARATIVO EXPRESSAO_ARIT
+  107          | RESETA_PILHAS EXPRESSAO_ARIT
+
+  108 RESETA_PILHAS: %empty
+
+  109 EXPRESSAO_ARIT: EXPRESSAO_ARIT token_pot EXPR
+  110               | EXPR
+
+  111 $@9: %empty
+
+  112 EXPR: EXPR token_mult $@9 VERIFICACAO_OP FATOR
+
+  113 $@10: %empty
+
+  114 EXPR: EXPR token_div $@10 VERIFICACAO_OP FATOR
+
+  115 $@11: %empty
+
+  116 EXPR: EXPR token_mod $@11 VERIFICACAO_OP FATOR
+
+  117 $@12: %empty
+
+  118 EXPR: EXPR token_and $@12 VERIFICACAO_OP FATOR
+  119     | FATOR
+
+  120 VERIFICACAO_OP: %empty
+
+  121 $@13: %empty
+
+  122 FATOR: FATOR token_mais $@13 VERIFICACAO_OP TERMO
+
+  123 $@14: %empty
+
+  124 FATOR: FATOR token_menos $@14 VERIFICACAO_OP TERMO
+
+  125 $@15: %empty
+
+  126 FATOR: FATOR token_or $@15 VERIFICACAO_OP TERMO
+  127      | TERMO VERIFICACAO_TERMOS
+
+  128 TERMO: OP_INCR
+  129      | TK_VLR_NUM
+  130      | token_abreParen EXPRESSAO token_fechaParen
+  131      | CHAMADA_FUNCAO
+  132      | TK_IDENT
+  133      | TK_VLR_BOOL
+  134      | MULTIPLOS_NOT token_abreParen EXPRESSAO token_fechaParen
+
+  135 VERIFICACAO_TERMOS: %empty
+
+  136 TK_IDENT: token_ident PILHA_IDENT
+  137         | token_ident PILHA_IDENT TAM_MATRIZ VERIFICA_LIM_MAT
+
+  138 VERIFICA_LIM_MAT: %empty
+
+  139 PILHA_IDENT: %empty
+
+  140 $@16: %empty
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@16 token_colchete_fecha
+  142           | token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha
+
+  143 TK_VLR_LITERAL: token_vlr_char
+  144               | token_vlr_string
+
+  145 TK_VLR_NUM: token_vlr_inteiro
+  146           | token_menos token_vlr_inteiro
+  147           | token_vlr_real
+  148           | token_menos token_vlr_real
+
+  149 MULTIPLOS_NOT: MULTIPLOS_NOT token_not
+  150              | token_not
+
+  151 TK_VLR_BOOL: MULTIPLOS_NOT token_true
+  152            | MULTIPLOS_NOT token_false
+  153            | token_true
+  154            | token_false
+  155            | MULTIPLOS_NOT TK_IDENT
+
+  156 $@17: %empty
+
+  157 OP_INCR: TK_IDENT $@17 token_increment
+
+  158 $@18: %empty
+
+  159 OP_INCR: TK_IDENT $@18 token_decrement
+
+  160 OP_COMPARATIVO: token_maior
+  161               | token_maior_igual
+  162               | token_menor
+  163               | token_menor_igual
+  164               | token_igual
+  165               | token_diferente
+
+
+Terminais, com as regras onde eles aparecem
+
+$end (0) 0
+error (256)
+token_var_fim (258) 12 13
+token_var (259) 12 13
+token_char (260) 100
+token_algoritmo (261) 1 2
+token_if (262) 46 47
+token_do (263) 48 50 51 52 53 54 55
+token_do_end (264) 48
+token_strings (265)
+token_string (266) 101
+token_fim (267) 10 11
+token_else (268) 47
+token_while_end (269) 50 51
+token_matriz (270) 94
+token_booleans (271)
+token_boolean (272) 103
+token_or (273) 126
+token_then (274) 46 47
+token_for (275) 52 53 54 55
+token_for_end (276) 52 53 54 55
+token_ints (277)
+token_func (278) 25 27
+token_func_fim (279) 14 15
+token_proc (280) 26 28
+token_proc_fim (281) 16 17
+token_switch (282)
+token_switch_end (283)
+token_case (284)
+token_default (285)
+token_int (286) 99
+token_inicio (287) 10 11
+token_and (288) 118
+token_if_end (289)
+token_then_end (290) 46 47
+token_else_end (291) 47
+token_de (292) 52 53 54 55 94
+token_ate (293) 49 52 53 54 55
+token_repeat (294) 49
+token_reals (295)
+token_return (296) 87
+token_real (297) 102
+token_not (298) 149 150
+token_while (299) 48 50 51
+token_chars (300)
+token_passo (301) 53 55
+token_print (302) 73
+token_read (303) 79 80
+token_central (304) 81
+token_minimo (305) 85
+token_maximo (306) 86
+token_aspas (307)
+token_atrib (308) 69
+token_maior (309) 160
+token_maior_igual (310) 161
+token_menor (311) 162
+token_menor_igual (312) 163
+token_igual (313) 164
+token_diferente (314) 165
+token_mais (315) 122
+token_menos (316) 58 84 124 146 148
+token_div (317) 114
+token_mult (318) 112
+token_pot (319) 109
+token_mod (320) 116
+token_increment (321) 157
+token_decrement (322) 159
+token_colchete_abre (323) 96 97 141 142
+token_colchete_fecha (324) 96 97 141 142
+token_abreParen (325) 32 33 73 79 80 81 85 86 90 91 130 134
+token_fechaParen (326) 32 33 73 79 80 81 85 86 90 91 130 134
+token_pt (327)
+token_virg (328) 21 34 70 75 81 85 86
+token_pt_virg (329) 1 2 18 19 25 26 27 28 43
+token_dois_pt (330) 18 19 25 27 34 35
+token_hashtag (331)
+token_chaves_abre (332)
+token_chaves_fecha (333)
+token_apost (334)
+token_cbarra (335)
+token_vlr_inteiro (336) 57 58 96 97 141 142 145 146
+token_vlr_real (337) 83 84 147 148
+token_vlr_char (338) 143
+token_true (339) 151 153
+token_false (340) 152 154
+token_ident (341) 1 2 21 22 25 26 27 28 34 35 80 88 136 137
+token_vlr_string (342) 144
+
+
+Não terminais com as regras onde eles aparecem
+
+$accept (88)
+    à esquerda: 0
+PROG (89)
+    à esquerda: 1 2, à direita: 0
+INSERE_INIT (90)
+    à esquerda: 3, à direita: 1 2
+BLOCO (91)
+    à esquerda: 5 6 7 9, à direita: 1
+$@1 (92)
+    à esquerda: 4, à direita: 5
+$@2 (93)
+    à esquerda: 8, à direita: 9
+BLOCO_MAIN (94)
+    à esquerda: 10 11, à direita: 5 6 7 9 23 24
+DECL_VAR (95)
+    à esquerda: 12 13, à direita: 5 7 23
+MAIS_FUNCOES (96)
+    à esquerda: 14 15 16 17, à direita: 5 9 14 16
+LISTA_VAR (97)
+    à esquerda: 18 19, à direita: 12 18
+COD1 (98)
+    à esquerda: 20, à direita: 18 19
+REC_IDENT (99)
+    à esquerda: 21 22, à direita: 18 19 21
+BLOCO_FUNC (100)
+    à esquerda: 23 24, à direita: 25 26
+DECL_FUNC (101)
+    à esquerda: 25 26 27 28, à direita: 14 15 16 17
+STRCPY_FUNC (102)
+    à esquerda: 29, à direita: 25 26 27 28
+INSERE_FUNC_TAB (103)
+    à esquerda: 30, à direita: 25 27
+INSERE_PROC_TAB (104)
+    à esquerda: 31, à direita: 26 28
+PARAMETROS (105)
+    à esquerda: 32 33, à direita: 25 26 27 28
+LISTA_PARAM (106)
+    à esquerda: 34 35, à direita: 32 34
+INSERE_VAR_LISTAPARAM (107)
+    à esquerda: 36, à direita: 34 35
+INSERE_LISTAPARAM_HASH (108)
+    à esquerda: 37, à direita: 34 35
+LISTA_CMD (109)
+    à esquerda: 38 39, à direita: 10 38 46 47 48 49 50 52 53
+CMD (110)
+    à esquerda: 40 41 42 43 44 45, à direita: 38 39
+CMD_IF (111)
+    à esquerda: 46 47, à direita: 45
+CMD_DO_WHILE (112)
+    à esquerda: 48, à direita: 41
+CMD_REPEAT (113)
+    à esquerda: 49, à direita: 44
+CMD_WHILE (114)
+    à esquerda: 50 51, à direita: 40
+CMD_FOR (115)
+    à esquerda: 52 53 54 55, à direita: 42
+IDENT_OU_INT (116)
+    à esquerda: 56 57 58, à direita: 52 53 54 55 82
+CMD_SIMPLES (117)
+    à esquerda: 59 60 61 62 63 64 65 66 67, à direita: 43
+ATRIB (118)
+    à esquerda: 69, à direita: 59
+$@3 (119)
+    à esquerda: 68, à direita: 69
+IDENTS (120)
+    à esquerda: 70 71, à direita: 69 70
+CMD_IMPRIMA (121)
+    à esquerda: 73, à direita: 61
+$@4 (122)
+    à esquerda: 72, à direita: 73
+ARG (123)
+    à esquerda: 75 77, à direita: 73 75 90
+$@5 (124)
+    à esquerda: 74, à direita: 75
+$@6 (125)
+    à esquerda: 76, à direita: 77
+VERIFICA_VAR_DECLARADA (126)
+    à esquerda: 78, à direita: 75 77
+CMD_LEIA (127)
+    à esquerda: 79 80, à direita: 62
+CMD_CENTRAL (128)
+    à esquerda: 81, à direita: 65
+IDENT_OU_NUM (129)
+    à esquerda: 82 83 84, à direita: 81 85 86
+CMD_MINIMO (130)
+    à esquerda: 85, à direita: 63
+CMD_MAXIMO (131)
+    à esquerda: 86, à direita: 64
+RETURN (132)
+    à esquerda: 87, à direita: 66
+STRCPY_IDENT (133)
+    à esquerda: 88, à direita: 90 91
+CHAMADA_FUNCAO (134)
+    à esquerda: 90 91, à direita: 60 131
+$@7 (135)
+    à esquerda: 89, à direita: 90
+TIPO (136)
+    à esquerda: 92 93, à direita: 18 19 25 27 34 35
+MATRIZ (137)
+    à esquerda: 94, à direita: 93
+T_MAT (138)
+    à esquerda: 96 97, à direita: 94
+$@8 (139)
+    à esquerda: 95, à direita: 96
+SALVAR_M (140)
+    à esquerda: 98, à direita: 96 97 141 142
+TIPO_PRIM (141)
+    à esquerda: 99 100 101 102 103, à direita: 92 94
+VALOR (142)
+    à esquerda: 104 105, à direita: 69 75 77
+EXPRESSAO (143)
+    à esquerda: 106 107, à direita: 46 47 48 49 50 51 87 104 130
+    134
+RESETA_PILHAS (144)
+    à esquerda: 108, à direita: 106 107
+EXPRESSAO_ARIT (145)
+    à esquerda: 109 110, à direita: 106 107 109
+EXPR (146)
+    à esquerda: 112 114 116 118 119, à direita: 109 110 112 114 116
+    118
+$@9 (147)
+    à esquerda: 111, à direita: 112
+$@10 (148)
+    à esquerda: 113, à direita: 114
+$@11 (149)
+    à esquerda: 115, à direita: 116
+$@12 (150)
+    à esquerda: 117, à direita: 118
+VERIFICACAO_OP (151)
+    à esquerda: 120, à direita: 112 114 116 118 122 124 126
+FATOR (152)
+    à esquerda: 122 124 126 127, à direita: 112 114 116 118 119 122
+    124 126
+$@13 (153)
+    à esquerda: 121, à direita: 122
+$@14 (154)
+    à esquerda: 123, à direita: 124
+$@15 (155)
+    à esquerda: 125, à direita: 126
+TERMO (156)
+    à esquerda: 128 129 130 131 132 133 134, à direita: 122 124 126
+    127
+VERIFICACAO_TERMOS (157)
+    à esquerda: 135, à direita: 127
+TK_IDENT (158)
+    à esquerda: 136 137, à direita: 52 53 54 55 56 70 71 132 155
+    157 159
+VERIFICA_LIM_MAT (159)
+    à esquerda: 138, à direita: 137
+PILHA_IDENT (160)
+    à esquerda: 139, à direita: 136 137
+TAM_MATRIZ (161)
+    à esquerda: 141 142, à direita: 137
+$@16 (162)
+    à esquerda: 140, à direita: 141
+TK_VLR_LITERAL (163)
+    à esquerda: 143 144, à direita: 105
+TK_VLR_NUM (164)
+    à esquerda: 145 146 147 148, à direita: 129
+MULTIPLOS_NOT (165)
+    à esquerda: 149 150, à direita: 134 149 151 152 155
+TK_VLR_BOOL (166)
+    à esquerda: 151 152 153 154 155, à direita: 133
+OP_INCR (167)
+    à esquerda: 157 159, à direita: 67 128
+$@17 (168)
+    à esquerda: 156, à direita: 157
+$@18 (169)
+    à esquerda: 158, à direita: 159
+OP_COMPARATIVO (170)
+    à esquerda: 160 161 162 163 164 165, à direita: 106
+
+
+Estado 0
+
+    0 $accept: . PROG $end
+
+    token_algoritmo  deslocar, e ir ao estado 1
+
+    PROG  ir ao estado 2
+
+
+Estado 1
+
+    1 PROG: token_algoritmo . token_ident INSERE_INIT token_pt_virg BLOCO
+    2     | token_algoritmo . token_ident INSERE_INIT token_pt_virg
+
+    token_ident  deslocar, e ir ao estado 3
+
+
+Estado 2
+
+    0 $accept: PROG . $end
+
+    $end  deslocar, e ir ao estado 4
+
+
+Estado 3
+
+    1 PROG: token_algoritmo token_ident . INSERE_INIT token_pt_virg BLOCO
+    2     | token_algoritmo token_ident . INSERE_INIT token_pt_virg
+
+    $padrão  reduzir usando a regra 3 (INSERE_INIT)
+
+    INSERE_INIT  ir ao estado 5
+
+
+Estado 4
+
+    0 $accept: PROG $end .
+
+    $padrão  aceitar
+
+
+Estado 5
+
+    1 PROG: token_algoritmo token_ident INSERE_INIT . token_pt_virg BLOCO
+    2     | token_algoritmo token_ident INSERE_INIT . token_pt_virg
+
+    token_pt_virg  deslocar, e ir ao estado 6
+
+
+Estado 6
+
+    1 PROG: token_algoritmo token_ident INSERE_INIT token_pt_virg . BLOCO
+    2     | token_algoritmo token_ident INSERE_INIT token_pt_virg .
+
+    token_var     deslocar, e ir ao estado 7
+    token_func    deslocar, e ir ao estado 8
+    token_proc    deslocar, e ir ao estado 9
+    token_inicio  deslocar, e ir ao estado 10
+
+    $padrão  reduzir usando a regra 2 (PROG)
+
+    BLOCO         ir ao estado 11
+    BLOCO_MAIN    ir ao estado 12
+    DECL_VAR      ir ao estado 13
+    MAIS_FUNCOES  ir ao estado 14
+    DECL_FUNC     ir ao estado 15
+
+
+Estado 7
+
+   12 DECL_VAR: token_var . LISTA_VAR token_var_fim
+   13         | token_var . token_var_fim
+
+    token_var_fim  deslocar, e ir ao estado 16
+    token_ident    deslocar, e ir ao estado 17
+
+    LISTA_VAR  ir ao estado 18
+    REC_IDENT  ir ao estado 19
+
+
+Estado 8
+
+   25 DECL_FUNC: token_func . token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC
+   27          | token_func . token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg
+
+    token_ident  deslocar, e ir ao estado 20
+
+
+Estado 9
+
+   26 DECL_FUNC: token_proc . token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg BLOCO_FUNC
+   28          | token_proc . token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg
+
+    token_ident  deslocar, e ir ao estado 21
+
+
+Estado 10
+
+   10 BLOCO_MAIN: token_inicio . LISTA_CMD token_fim
+   11           | token_inicio . token_fim
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_fim      deslocar, e ir ao estado 24
+    token_for      deslocar, e ir ao estado 25
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 35
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 11
+
+    1 PROG: token_algoritmo token_ident INSERE_INIT token_pt_virg BLOCO .
+
+    $padrão  reduzir usando a regra 1 (PROG)
+
+
+Estado 12
+
+    6 BLOCO: BLOCO_MAIN .
+
+    $padrão  reduzir usando a regra 6 (BLOCO)
+
+
+Estado 13
+
+    5 BLOCO: DECL_VAR . MAIS_FUNCOES $@1 BLOCO_MAIN
+    7      | DECL_VAR . BLOCO_MAIN
+
+    token_func    deslocar, e ir ao estado 8
+    token_proc    deslocar, e ir ao estado 9
+    token_inicio  deslocar, e ir ao estado 10
+
+    BLOCO_MAIN    ir ao estado 55
+    MAIS_FUNCOES  ir ao estado 56
+    DECL_FUNC     ir ao estado 15
+
+
+Estado 14
+
+    9 BLOCO: MAIS_FUNCOES . $@2 BLOCO_MAIN
+   14 MAIS_FUNCOES: MAIS_FUNCOES . DECL_FUNC token_func_fim
+   16             | MAIS_FUNCOES . DECL_FUNC token_proc_fim
+
+    token_func  deslocar, e ir ao estado 8
+    token_proc  deslocar, e ir ao estado 9
+
+    $padrão  reduzir usando a regra 8 ($@2)
+
+    $@2        ir ao estado 57
+    DECL_FUNC  ir ao estado 58
+
+
+Estado 15
+
+   15 MAIS_FUNCOES: DECL_FUNC . token_func_fim
+   17             | DECL_FUNC . token_proc_fim
+
+    token_func_fim  deslocar, e ir ao estado 59
+    token_proc_fim  deslocar, e ir ao estado 60
+
+
+Estado 16
+
+   13 DECL_VAR: token_var token_var_fim .
+
+    $padrão  reduzir usando a regra 13 (DECL_VAR)
+
+
+Estado 17
+
+   22 REC_IDENT: token_ident .
+
+    $padrão  reduzir usando a regra 22 (REC_IDENT)
+
+
+Estado 18
+
+   12 DECL_VAR: token_var LISTA_VAR . token_var_fim
+   18 LISTA_VAR: LISTA_VAR . REC_IDENT token_dois_pt TIPO COD1 token_pt_virg
+
+    token_var_fim  deslocar, e ir ao estado 61
+    token_ident    deslocar, e ir ao estado 17
+
+    REC_IDENT  ir ao estado 62
+
+
+Estado 19
+
+   19 LISTA_VAR: REC_IDENT . token_dois_pt TIPO COD1 token_pt_virg
+   21 REC_IDENT: REC_IDENT . token_virg token_ident
+
+    token_virg     deslocar, e ir ao estado 63
+    token_dois_pt  deslocar, e ir ao estado 64
+
+
+Estado 20
+
+   25 DECL_FUNC: token_func token_ident . STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC
+   27          | token_func token_ident . STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg
+
+    $padrão  reduzir usando a regra 29 (STRCPY_FUNC)
+
+    STRCPY_FUNC  ir ao estado 65
+
+
+Estado 21
+
+   26 DECL_FUNC: token_proc token_ident . STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg BLOCO_FUNC
+   28          | token_proc token_ident . STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg
+
+    $padrão  reduzir usando a regra 29 (STRCPY_FUNC)
+
+    STRCPY_FUNC  ir ao estado 66
+
+
+Estado 22
+
+   46 CMD_IF: token_if . EXPRESSAO token_then LISTA_CMD token_then_end
+   47       | token_if . EXPRESSAO token_then LISTA_CMD token_then_end token_else LISTA_CMD token_else_end
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    EXPRESSAO      ir ao estado 67
+    RESETA_PILHAS  ir ao estado 68
+
+
+Estado 23
+
+   48 CMD_DO_WHILE: token_do . LISTA_CMD token_do_end token_while EXPRESSAO
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 69
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 24
+
+   11 BLOCO_MAIN: token_inicio token_fim .
+
+    $padrão  reduzir usando a regra 11 (BLOCO_MAIN)
+
+
+Estado 25
+
+   52 CMD_FOR: token_for . TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do LISTA_CMD token_for_end
+   53        | token_for . TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end
+   54        | token_for . TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do token_for_end
+   55        | token_for . TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do token_for_end
+
+    token_ident  deslocar, e ir ao estado 70
+
+    TK_IDENT  ir ao estado 71
+
+
+Estado 26
+
+   49 CMD_REPEAT: token_repeat . LISTA_CMD token_ate EXPRESSAO
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 72
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 27
+
+   87 RETURN: token_return . EXPRESSAO
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    EXPRESSAO      ir ao estado 73
+    RESETA_PILHAS  ir ao estado 68
+
+
+Estado 28
+
+   50 CMD_WHILE: token_while . EXPRESSAO token_do LISTA_CMD token_while_end
+   51          | token_while . EXPRESSAO token_do token_while_end
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    EXPRESSAO      ir ao estado 74
+    RESETA_PILHAS  ir ao estado 68
+
+
+Estado 29
+
+   73 CMD_IMPRIMA: token_print . token_abreParen ARG $@4 token_fechaParen
+
+    token_abreParen  deslocar, e ir ao estado 75
+
+
+Estado 30
+
+   79 CMD_LEIA: token_read . token_abreParen token_fechaParen
+   80         | token_read . token_abreParen token_ident token_fechaParen
+
+    token_abreParen  deslocar, e ir ao estado 76
+
+
+Estado 31
+
+   81 CMD_CENTRAL: token_central . token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_abreParen  deslocar, e ir ao estado 77
+
+
+Estado 32
+
+   85 CMD_MINIMO: token_minimo . token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_abreParen  deslocar, e ir ao estado 78
+
+
+Estado 33
+
+   86 CMD_MAXIMO: token_maximo . token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_abreParen  deslocar, e ir ao estado 79
+
+
+Estado 34
+
+   88 STRCPY_IDENT: token_ident .
+  136 TK_IDENT: token_ident . PILHA_IDENT
+  137         | token_ident . PILHA_IDENT TAM_MATRIZ VERIFICA_LIM_MAT
+
+    token_abreParen  reduzir usando a regra 88 (STRCPY_IDENT)
+    $padrão         reduzir usando a regra 139 (PILHA_IDENT)
+
+    PILHA_IDENT  ir ao estado 80
+
+
+Estado 35
+
+   10 BLOCO_MAIN: token_inicio LISTA_CMD . token_fim
+   38 LISTA_CMD: LISTA_CMD . CMD
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_fim      deslocar, e ir ao estado 81
+    token_for      deslocar, e ir ao estado 25
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 36
+
+   39 LISTA_CMD: CMD .
+
+    $padrão  reduzir usando a regra 39 (LISTA_CMD)
+
+
+Estado 37
+
+   45 CMD: CMD_IF .
+
+    $padrão  reduzir usando a regra 45 (CMD)
+
+
+Estado 38
+
+   41 CMD: CMD_DO_WHILE .
+
+    $padrão  reduzir usando a regra 41 (CMD)
+
+
+Estado 39
+
+   44 CMD: CMD_REPEAT .
+
+    $padrão  reduzir usando a regra 44 (CMD)
+
+
+Estado 40
+
+   40 CMD: CMD_WHILE .
+
+    $padrão  reduzir usando a regra 40 (CMD)
+
+
+Estado 41
+
+   42 CMD: CMD_FOR .
+
+    $padrão  reduzir usando a regra 42 (CMD)
+
+
+Estado 42
+
+   43 CMD: CMD_SIMPLES . token_pt_virg
+
+    token_pt_virg  deslocar, e ir ao estado 83
+
+
+Estado 43
+
+   59 CMD_SIMPLES: ATRIB .
+
+    $padrão  reduzir usando a regra 59 (CMD_SIMPLES)
+
+
+Estado 44
+
+   69 ATRIB: IDENTS . $@3 token_atrib VALOR
+   70 IDENTS: IDENTS . token_virg TK_IDENT
+
+    token_virg  deslocar, e ir ao estado 84
+
+    $padrão  reduzir usando a regra 68 ($@3)
+
+    $@3  ir ao estado 85
+
+
+Estado 45
+
+   61 CMD_SIMPLES: CMD_IMPRIMA .
+
+    $padrão  reduzir usando a regra 61 (CMD_SIMPLES)
+
+
+Estado 46
+
+   62 CMD_SIMPLES: CMD_LEIA .
+
+    $padrão  reduzir usando a regra 62 (CMD_SIMPLES)
+
+
+Estado 47
+
+   65 CMD_SIMPLES: CMD_CENTRAL .
+
+    $padrão  reduzir usando a regra 65 (CMD_SIMPLES)
+
+
+Estado 48
+
+   63 CMD_SIMPLES: CMD_MINIMO .
+
+    $padrão  reduzir usando a regra 63 (CMD_SIMPLES)
+
+
+Estado 49
+
+   64 CMD_SIMPLES: CMD_MAXIMO .
+
+    $padrão  reduzir usando a regra 64 (CMD_SIMPLES)
+
+
+Estado 50
+
+   66 CMD_SIMPLES: RETURN .
+
+    $padrão  reduzir usando a regra 66 (CMD_SIMPLES)
+
+
+Estado 51
+
+   90 CHAMADA_FUNCAO: STRCPY_IDENT . token_abreParen ARG $@7 token_fechaParen
+   91               | STRCPY_IDENT . token_abreParen token_fechaParen
+
+    token_abreParen  deslocar, e ir ao estado 86
+
+
+Estado 52
+
+   60 CMD_SIMPLES: CHAMADA_FUNCAO .
+
+    $padrão  reduzir usando a regra 60 (CMD_SIMPLES)
+
+
+Estado 53
+
+   71 IDENTS: TK_IDENT .
+  157 OP_INCR: TK_IDENT . $@17 token_increment
+  159        | TK_IDENT . $@18 token_decrement
+
+    token_increment  reduzir usando a regra 156 ($@17)
+    token_decrement  reduzir usando a regra 158 ($@18)
+    $padrão         reduzir usando a regra 71 (IDENTS)
+
+    $@17  ir ao estado 87
+    $@18  ir ao estado 88
+
+
+Estado 54
+
+   67 CMD_SIMPLES: OP_INCR .
+
+    $padrão  reduzir usando a regra 67 (CMD_SIMPLES)
+
+
+Estado 55
+
+    7 BLOCO: DECL_VAR BLOCO_MAIN .
+
+    $padrão  reduzir usando a regra 7 (BLOCO)
+
+
+Estado 56
+
+    5 BLOCO: DECL_VAR MAIS_FUNCOES . $@1 BLOCO_MAIN
+   14 MAIS_FUNCOES: MAIS_FUNCOES . DECL_FUNC token_func_fim
+   16             | MAIS_FUNCOES . DECL_FUNC token_proc_fim
+
+    token_func  deslocar, e ir ao estado 8
+    token_proc  deslocar, e ir ao estado 9
+
+    $padrão  reduzir usando a regra 4 ($@1)
+
+    $@1        ir ao estado 89
+    DECL_FUNC  ir ao estado 58
+
+
+Estado 57
+
+    9 BLOCO: MAIS_FUNCOES $@2 . BLOCO_MAIN
+
+    token_inicio  deslocar, e ir ao estado 10
+
+    BLOCO_MAIN  ir ao estado 90
+
+
+Estado 58
+
+   14 MAIS_FUNCOES: MAIS_FUNCOES DECL_FUNC . token_func_fim
+   16             | MAIS_FUNCOES DECL_FUNC . token_proc_fim
+
+    token_func_fim  deslocar, e ir ao estado 91
+    token_proc_fim  deslocar, e ir ao estado 92
+
+
+Estado 59
+
+   15 MAIS_FUNCOES: DECL_FUNC token_func_fim .
+
+    $padrão  reduzir usando a regra 15 (MAIS_FUNCOES)
+
+
+Estado 60
+
+   17 MAIS_FUNCOES: DECL_FUNC token_proc_fim .
+
+    $padrão  reduzir usando a regra 17 (MAIS_FUNCOES)
+
+
+Estado 61
+
+   12 DECL_VAR: token_var LISTA_VAR token_var_fim .
+
+    $padrão  reduzir usando a regra 12 (DECL_VAR)
+
+
+Estado 62
+
+   18 LISTA_VAR: LISTA_VAR REC_IDENT . token_dois_pt TIPO COD1 token_pt_virg
+   21 REC_IDENT: REC_IDENT . token_virg token_ident
+
+    token_virg     deslocar, e ir ao estado 63
+    token_dois_pt  deslocar, e ir ao estado 93
+
+
+Estado 63
+
+   21 REC_IDENT: REC_IDENT token_virg . token_ident
+
+    token_ident  deslocar, e ir ao estado 94
+
+
+Estado 64
+
+   19 LISTA_VAR: REC_IDENT token_dois_pt . TIPO COD1 token_pt_virg
+
+    token_char     deslocar, e ir ao estado 95
+    token_string   deslocar, e ir ao estado 96
+    token_matriz   deslocar, e ir ao estado 97
+    token_boolean  deslocar, e ir ao estado 98
+    token_int      deslocar, e ir ao estado 99
+    token_real     deslocar, e ir ao estado 100
+
+    TIPO       ir ao estado 101
+    MATRIZ     ir ao estado 102
+    TIPO_PRIM  ir ao estado 103
+
+
+Estado 65
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC . PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC
+   27          | token_func token_ident STRCPY_FUNC . PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg
+
+    token_abreParen  deslocar, e ir ao estado 104
+
+    PARAMETROS  ir ao estado 105
+
+
+Estado 66
+
+   26 DECL_FUNC: token_proc token_ident STRCPY_FUNC . PARAMETROS INSERE_PROC_TAB token_pt_virg BLOCO_FUNC
+   28          | token_proc token_ident STRCPY_FUNC . PARAMETROS INSERE_PROC_TAB token_pt_virg
+
+    token_abreParen  deslocar, e ir ao estado 104
+
+    PARAMETROS  ir ao estado 106
+
+
+Estado 67
+
+   46 CMD_IF: token_if EXPRESSAO . token_then LISTA_CMD token_then_end
+   47       | token_if EXPRESSAO . token_then LISTA_CMD token_then_end token_else LISTA_CMD token_else_end
+
+    token_then  deslocar, e ir ao estado 107
+
+
+Estado 68
+
+  106 EXPRESSAO: RESETA_PILHAS . EXPRESSAO_ARIT OP_COMPARATIVO EXPRESSAO_ARIT
+  107          | RESETA_PILHAS . EXPRESSAO_ARIT
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    EXPRESSAO_ARIT  ir ao estado 116
+    EXPR            ir ao estado 117
+    FATOR           ir ao estado 118
+    TERMO           ir ao estado 119
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 69
+
+   38 LISTA_CMD: LISTA_CMD . CMD
+   48 CMD_DO_WHILE: token_do LISTA_CMD . token_do_end token_while EXPRESSAO
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_do_end   deslocar, e ir ao estado 125
+    token_for      deslocar, e ir ao estado 25
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 70
+
+  136 TK_IDENT: token_ident . PILHA_IDENT
+  137         | token_ident . PILHA_IDENT TAM_MATRIZ VERIFICA_LIM_MAT
+
+    $padrão  reduzir usando a regra 139 (PILHA_IDENT)
+
+    PILHA_IDENT  ir ao estado 80
+
+
+Estado 71
+
+   52 CMD_FOR: token_for TK_IDENT . token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do LISTA_CMD token_for_end
+   53        | token_for TK_IDENT . token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end
+   54        | token_for TK_IDENT . token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do token_for_end
+   55        | token_for TK_IDENT . token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do token_for_end
+
+    token_de  deslocar, e ir ao estado 126
+
+
+Estado 72
+
+   38 LISTA_CMD: LISTA_CMD . CMD
+   49 CMD_REPEAT: token_repeat LISTA_CMD . token_ate EXPRESSAO
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_ate      deslocar, e ir ao estado 127
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 73
+
+   87 RETURN: token_return EXPRESSAO .
+
+    $padrão  reduzir usando a regra 87 (RETURN)
+
+
+Estado 74
+
+   50 CMD_WHILE: token_while EXPRESSAO . token_do LISTA_CMD token_while_end
+   51          | token_while EXPRESSAO . token_do token_while_end
+
+    token_do  deslocar, e ir ao estado 128
+
+
+Estado 75
+
+   73 CMD_IMPRIMA: token_print token_abreParen . ARG $@4 token_fechaParen
+
+    $padrão  reduzir usando a regra 76 ($@6)
+
+    ARG  ir ao estado 129
+    $@6  ir ao estado 130
+
+
+Estado 76
+
+   79 CMD_LEIA: token_read token_abreParen . token_fechaParen
+   80         | token_read token_abreParen . token_ident token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 131
+    token_ident       deslocar, e ir ao estado 132
+
+
+Estado 77
+
+   81 CMD_CENTRAL: token_central token_abreParen . IDENT_OU_NUM token_virg IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_menos        deslocar, e ir ao estado 133
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_vlr_real     deslocar, e ir ao estado 135
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 136
+    IDENT_OU_NUM  ir ao estado 137
+    TK_IDENT      ir ao estado 138
+
+
+Estado 78
+
+   85 CMD_MINIMO: token_minimo token_abreParen . IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_menos        deslocar, e ir ao estado 133
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_vlr_real     deslocar, e ir ao estado 135
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 136
+    IDENT_OU_NUM  ir ao estado 139
+    TK_IDENT      ir ao estado 138
+
+
+Estado 79
+
+   86 CMD_MAXIMO: token_maximo token_abreParen . IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_menos        deslocar, e ir ao estado 133
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_vlr_real     deslocar, e ir ao estado 135
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 136
+    IDENT_OU_NUM  ir ao estado 140
+    TK_IDENT      ir ao estado 138
+
+
+Estado 80
+
+  136 TK_IDENT: token_ident PILHA_IDENT .
+  137         | token_ident PILHA_IDENT . TAM_MATRIZ VERIFICA_LIM_MAT
+
+    token_colchete_abre  deslocar, e ir ao estado 141
+
+    $padrão  reduzir usando a regra 136 (TK_IDENT)
+
+    TAM_MATRIZ  ir ao estado 142
+
+
+Estado 81
+
+   10 BLOCO_MAIN: token_inicio LISTA_CMD token_fim .
+
+    $padrão  reduzir usando a regra 10 (BLOCO_MAIN)
+
+
+Estado 82
+
+   38 LISTA_CMD: LISTA_CMD CMD .
+
+    $padrão  reduzir usando a regra 38 (LISTA_CMD)
+
+
+Estado 83
+
+   43 CMD: CMD_SIMPLES token_pt_virg .
+
+    $padrão  reduzir usando a regra 43 (CMD)
+
+
+Estado 84
+
+   70 IDENTS: IDENTS token_virg . TK_IDENT
+
+    token_ident  deslocar, e ir ao estado 70
+
+    TK_IDENT  ir ao estado 143
+
+
+Estado 85
+
+   69 ATRIB: IDENTS $@3 . token_atrib VALOR
+
+    token_atrib  deslocar, e ir ao estado 144
+
+
+Estado 86
+
+   90 CHAMADA_FUNCAO: STRCPY_IDENT token_abreParen . ARG $@7 token_fechaParen
+   91               | STRCPY_IDENT token_abreParen . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 145
+
+    $padrão  reduzir usando a regra 76 ($@6)
+
+    ARG  ir ao estado 146
+    $@6  ir ao estado 130
+
+
+Estado 87
+
+  157 OP_INCR: TK_IDENT $@17 . token_increment
+
+    token_increment  deslocar, e ir ao estado 147
+
+
+Estado 88
+
+  159 OP_INCR: TK_IDENT $@18 . token_decrement
+
+    token_decrement  deslocar, e ir ao estado 148
+
+
+Estado 89
+
+    5 BLOCO: DECL_VAR MAIS_FUNCOES $@1 . BLOCO_MAIN
+
+    token_inicio  deslocar, e ir ao estado 10
+
+    BLOCO_MAIN  ir ao estado 149
+
+
+Estado 90
+
+    9 BLOCO: MAIS_FUNCOES $@2 BLOCO_MAIN .
+
+    $padrão  reduzir usando a regra 9 (BLOCO)
+
+
+Estado 91
+
+   14 MAIS_FUNCOES: MAIS_FUNCOES DECL_FUNC token_func_fim .
+
+    $padrão  reduzir usando a regra 14 (MAIS_FUNCOES)
+
+
+Estado 92
+
+   16 MAIS_FUNCOES: MAIS_FUNCOES DECL_FUNC token_proc_fim .
+
+    $padrão  reduzir usando a regra 16 (MAIS_FUNCOES)
+
+
+Estado 93
+
+   18 LISTA_VAR: LISTA_VAR REC_IDENT token_dois_pt . TIPO COD1 token_pt_virg
+
+    token_char     deslocar, e ir ao estado 95
+    token_string   deslocar, e ir ao estado 96
+    token_matriz   deslocar, e ir ao estado 97
+    token_boolean  deslocar, e ir ao estado 98
+    token_int      deslocar, e ir ao estado 99
+    token_real     deslocar, e ir ao estado 100
+
+    TIPO       ir ao estado 150
+    MATRIZ     ir ao estado 102
+    TIPO_PRIM  ir ao estado 103
+
+
+Estado 94
+
+   21 REC_IDENT: REC_IDENT token_virg token_ident .
+
+    $padrão  reduzir usando a regra 21 (REC_IDENT)
+
+
+Estado 95
+
+  100 TIPO_PRIM: token_char .
+
+    $padrão  reduzir usando a regra 100 (TIPO_PRIM)
+
+
+Estado 96
+
+  101 TIPO_PRIM: token_string .
+
+    $padrão  reduzir usando a regra 101 (TIPO_PRIM)
+
+
+Estado 97
+
+   94 MATRIZ: token_matriz . T_MAT token_de TIPO_PRIM
+
+    token_colchete_abre  deslocar, e ir ao estado 151
+
+    T_MAT  ir ao estado 152
+
+
+Estado 98
+
+  103 TIPO_PRIM: token_boolean .
+
+    $padrão  reduzir usando a regra 103 (TIPO_PRIM)
+
+
+Estado 99
+
+   99 TIPO_PRIM: token_int .
+
+    $padrão  reduzir usando a regra 99 (TIPO_PRIM)
+
+
+Estado 100
+
+  102 TIPO_PRIM: token_real .
+
+    $padrão  reduzir usando a regra 102 (TIPO_PRIM)
+
+
+Estado 101
+
+   19 LISTA_VAR: REC_IDENT token_dois_pt TIPO . COD1 token_pt_virg
+
+    $padrão  reduzir usando a regra 20 (COD1)
+
+    COD1  ir ao estado 153
+
+
+Estado 102
+
+   93 TIPO: MATRIZ .
+
+    $padrão  reduzir usando a regra 93 (TIPO)
+
+
+Estado 103
+
+   92 TIPO: TIPO_PRIM .
+
+    $padrão  reduzir usando a regra 92 (TIPO)
+
+
+Estado 104
+
+   32 PARAMETROS: token_abreParen . LISTA_PARAM token_fechaParen
+   33           | token_abreParen . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 154
+    token_ident       deslocar, e ir ao estado 155
+
+    LISTA_PARAM  ir ao estado 156
+
+
+Estado 105
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC PARAMETROS . token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC
+   27          | token_func token_ident STRCPY_FUNC PARAMETROS . token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg
+
+    token_dois_pt  deslocar, e ir ao estado 157
+
+
+Estado 106
+
+   26 DECL_FUNC: token_proc token_ident STRCPY_FUNC PARAMETROS . INSERE_PROC_TAB token_pt_virg BLOCO_FUNC
+   28          | token_proc token_ident STRCPY_FUNC PARAMETROS . INSERE_PROC_TAB token_pt_virg
+
+    $padrão  reduzir usando a regra 31 (INSERE_PROC_TAB)
+
+    INSERE_PROC_TAB  ir ao estado 158
+
+
+Estado 107
+
+   46 CMD_IF: token_if EXPRESSAO token_then . LISTA_CMD token_then_end
+   47       | token_if EXPRESSAO token_then . LISTA_CMD token_then_end token_else LISTA_CMD token_else_end
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 159
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 108
+
+  150 MULTIPLOS_NOT: token_not .
+
+    $padrão  reduzir usando a regra 150 (MULTIPLOS_NOT)
+
+
+Estado 109
+
+  146 TK_VLR_NUM: token_menos . token_vlr_inteiro
+  148           | token_menos . token_vlr_real
+
+    token_vlr_inteiro  deslocar, e ir ao estado 160
+    token_vlr_real     deslocar, e ir ao estado 161
+
+
+Estado 110
+
+  130 TERMO: token_abreParen . EXPRESSAO token_fechaParen
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    EXPRESSAO      ir ao estado 162
+    RESETA_PILHAS  ir ao estado 68
+
+
+Estado 111
+
+  145 TK_VLR_NUM: token_vlr_inteiro .
+
+    $padrão  reduzir usando a regra 145 (TK_VLR_NUM)
+
+
+Estado 112
+
+  147 TK_VLR_NUM: token_vlr_real .
+
+    $padrão  reduzir usando a regra 147 (TK_VLR_NUM)
+
+
+Estado 113
+
+  153 TK_VLR_BOOL: token_true .
+
+    $padrão  reduzir usando a regra 153 (TK_VLR_BOOL)
+
+
+Estado 114
+
+  154 TK_VLR_BOOL: token_false .
+
+    $padrão  reduzir usando a regra 154 (TK_VLR_BOOL)
+
+
+Estado 115
+
+  131 TERMO: CHAMADA_FUNCAO .
+
+    $padrão  reduzir usando a regra 131 (TERMO)
+
+
+Estado 116
+
+  106 EXPRESSAO: RESETA_PILHAS EXPRESSAO_ARIT . OP_COMPARATIVO EXPRESSAO_ARIT
+  107          | RESETA_PILHAS EXPRESSAO_ARIT .
+  109 EXPRESSAO_ARIT: EXPRESSAO_ARIT . token_pot EXPR
+
+    token_maior        deslocar, e ir ao estado 163
+    token_maior_igual  deslocar, e ir ao estado 164
+    token_menor        deslocar, e ir ao estado 165
+    token_menor_igual  deslocar, e ir ao estado 166
+    token_igual        deslocar, e ir ao estado 167
+    token_diferente    deslocar, e ir ao estado 168
+    token_pot          deslocar, e ir ao estado 169
+
+    $padrão  reduzir usando a regra 107 (EXPRESSAO)
+
+    OP_COMPARATIVO  ir ao estado 170
+
+
+Estado 117
+
+  110 EXPRESSAO_ARIT: EXPR .
+  112 EXPR: EXPR . token_mult $@9 VERIFICACAO_OP FATOR
+  114     | EXPR . token_div $@10 VERIFICACAO_OP FATOR
+  116     | EXPR . token_mod $@11 VERIFICACAO_OP FATOR
+  118     | EXPR . token_and $@12 VERIFICACAO_OP FATOR
+
+    token_and   deslocar, e ir ao estado 171
+    token_div   deslocar, e ir ao estado 172
+    token_mult  deslocar, e ir ao estado 173
+    token_mod   deslocar, e ir ao estado 174
+
+    $padrão  reduzir usando a regra 110 (EXPRESSAO_ARIT)
+
+
+Estado 118
+
+  119 EXPR: FATOR .
+  122 FATOR: FATOR . token_mais $@13 VERIFICACAO_OP TERMO
+  124      | FATOR . token_menos $@14 VERIFICACAO_OP TERMO
+  126      | FATOR . token_or $@15 VERIFICACAO_OP TERMO
+
+    token_or     deslocar, e ir ao estado 175
+    token_mais   deslocar, e ir ao estado 176
+    token_menos  deslocar, e ir ao estado 177
+
+    $padrão  reduzir usando a regra 119 (EXPR)
+
+
+Estado 119
+
+  127 FATOR: TERMO . VERIFICACAO_TERMOS
+
+    $padrão  reduzir usando a regra 135 (VERIFICACAO_TERMOS)
+
+    VERIFICACAO_TERMOS  ir ao estado 178
+
+
+Estado 120
+
+  132 TERMO: TK_IDENT .
+  157 OP_INCR: TK_IDENT . $@17 token_increment
+  159        | TK_IDENT . $@18 token_decrement
+
+    token_increment  reduzir usando a regra 156 ($@17)
+    token_decrement  reduzir usando a regra 158 ($@18)
+    $padrão         reduzir usando a regra 132 (TERMO)
+
+    $@17  ir ao estado 87
+    $@18  ir ao estado 88
+
+
+Estado 121
+
+  129 TERMO: TK_VLR_NUM .
+
+    $padrão  reduzir usando a regra 129 (TERMO)
+
+
+Estado 122
+
+  134 TERMO: MULTIPLOS_NOT . token_abreParen EXPRESSAO token_fechaParen
+  149 MULTIPLOS_NOT: MULTIPLOS_NOT . token_not
+  151 TK_VLR_BOOL: MULTIPLOS_NOT . token_true
+  152            | MULTIPLOS_NOT . token_false
+  155            | MULTIPLOS_NOT . TK_IDENT
+
+    token_not        deslocar, e ir ao estado 179
+    token_abreParen  deslocar, e ir ao estado 180
+    token_true       deslocar, e ir ao estado 181
+    token_false      deslocar, e ir ao estado 182
+    token_ident      deslocar, e ir ao estado 70
+
+    TK_IDENT  ir ao estado 183
+
+
+Estado 123
+
+  133 TERMO: TK_VLR_BOOL .
+
+    $padrão  reduzir usando a regra 133 (TERMO)
+
+
+Estado 124
+
+  128 TERMO: OP_INCR .
+
+    $padrão  reduzir usando a regra 128 (TERMO)
+
+
+Estado 125
+
+   48 CMD_DO_WHILE: token_do LISTA_CMD token_do_end . token_while EXPRESSAO
+
+    token_while  deslocar, e ir ao estado 184
+
+
+Estado 126
+
+   52 CMD_FOR: token_for TK_IDENT token_de . IDENT_OU_INT token_ate IDENT_OU_INT token_do LISTA_CMD token_for_end
+   53        | token_for TK_IDENT token_de . IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end
+   54        | token_for TK_IDENT token_de . IDENT_OU_INT token_ate IDENT_OU_INT token_do token_for_end
+   55        | token_for TK_IDENT token_de . IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do token_for_end
+
+    token_menos        deslocar, e ir ao estado 185
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 186
+    TK_IDENT      ir ao estado 138
+
+
+Estado 127
+
+   49 CMD_REPEAT: token_repeat LISTA_CMD token_ate . EXPRESSAO
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    EXPRESSAO      ir ao estado 187
+    RESETA_PILHAS  ir ao estado 68
+
+
+Estado 128
+
+   50 CMD_WHILE: token_while EXPRESSAO token_do . LISTA_CMD token_while_end
+   51          | token_while EXPRESSAO token_do . token_while_end
+
+    token_if         deslocar, e ir ao estado 22
+    token_do         deslocar, e ir ao estado 23
+    token_while_end  deslocar, e ir ao estado 188
+    token_for        deslocar, e ir ao estado 25
+    token_repeat     deslocar, e ir ao estado 26
+    token_return     deslocar, e ir ao estado 27
+    token_while      deslocar, e ir ao estado 28
+    token_print      deslocar, e ir ao estado 29
+    token_read       deslocar, e ir ao estado 30
+    token_central    deslocar, e ir ao estado 31
+    token_minimo     deslocar, e ir ao estado 32
+    token_maximo     deslocar, e ir ao estado 33
+    token_ident      deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 189
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 129
+
+   73 CMD_IMPRIMA: token_print token_abreParen ARG . $@4 token_fechaParen
+   75 ARG: ARG . token_virg $@5 VALOR VERIFICA_VAR_DECLARADA
+
+    token_virg  deslocar, e ir ao estado 190
+
+    $padrão  reduzir usando a regra 72 ($@4)
+
+    $@4  ir ao estado 191
+
+
+Estado 130
+
+   77 ARG: $@6 . VALOR VERIFICA_VAR_DECLARADA
+
+    token_vlr_char    deslocar, e ir ao estado 192
+    token_vlr_string  deslocar, e ir ao estado 193
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    VALOR           ir ao estado 194
+    EXPRESSAO       ir ao estado 195
+    RESETA_PILHAS   ir ao estado 68
+    TK_VLR_LITERAL  ir ao estado 196
+
+
+Estado 131
+
+   79 CMD_LEIA: token_read token_abreParen token_fechaParen .
+
+    $padrão  reduzir usando a regra 79 (CMD_LEIA)
+
+
+Estado 132
+
+   80 CMD_LEIA: token_read token_abreParen token_ident . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 197
+
+
+Estado 133
+
+   58 IDENT_OU_INT: token_menos . token_vlr_inteiro
+   84 IDENT_OU_NUM: token_menos . token_vlr_real
+
+    token_vlr_inteiro  deslocar, e ir ao estado 198
+    token_vlr_real     deslocar, e ir ao estado 199
+
+
+Estado 134
+
+   57 IDENT_OU_INT: token_vlr_inteiro .
+
+    $padrão  reduzir usando a regra 57 (IDENT_OU_INT)
+
+
+Estado 135
+
+   83 IDENT_OU_NUM: token_vlr_real .
+
+    $padrão  reduzir usando a regra 83 (IDENT_OU_NUM)
+
+
+Estado 136
+
+   82 IDENT_OU_NUM: IDENT_OU_INT .
+
+    $padrão  reduzir usando a regra 82 (IDENT_OU_NUM)
+
+
+Estado 137
+
+   81 CMD_CENTRAL: token_central token_abreParen IDENT_OU_NUM . token_virg IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_virg  deslocar, e ir ao estado 200
+
+
+Estado 138
+
+   56 IDENT_OU_INT: TK_IDENT .
+
+    $padrão  reduzir usando a regra 56 (IDENT_OU_INT)
+
+
+Estado 139
+
+   85 CMD_MINIMO: token_minimo token_abreParen IDENT_OU_NUM . token_virg IDENT_OU_NUM token_fechaParen
+
+    token_virg  deslocar, e ir ao estado 201
+
+
+Estado 140
+
+   86 CMD_MAXIMO: token_maximo token_abreParen IDENT_OU_NUM . token_virg IDENT_OU_NUM token_fechaParen
+
+    token_virg  deslocar, e ir ao estado 202
+
+
+Estado 141
+
+  141 TAM_MATRIZ: token_colchete_abre . token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@16 token_colchete_fecha
+  142           | token_colchete_abre . token_vlr_inteiro SALVAR_M token_colchete_fecha
+
+    token_vlr_inteiro  deslocar, e ir ao estado 203
+
+
+Estado 142
+
+  137 TK_IDENT: token_ident PILHA_IDENT TAM_MATRIZ . VERIFICA_LIM_MAT
+
+    $padrão  reduzir usando a regra 138 (VERIFICA_LIM_MAT)
+
+    VERIFICA_LIM_MAT  ir ao estado 204
+
+
+Estado 143
+
+   70 IDENTS: IDENTS token_virg TK_IDENT .
+
+    $padrão  reduzir usando a regra 70 (IDENTS)
+
+
+Estado 144
+
+   69 ATRIB: IDENTS $@3 token_atrib . VALOR
+
+    token_vlr_char    deslocar, e ir ao estado 192
+    token_vlr_string  deslocar, e ir ao estado 193
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    VALOR           ir ao estado 205
+    EXPRESSAO       ir ao estado 195
+    RESETA_PILHAS   ir ao estado 68
+    TK_VLR_LITERAL  ir ao estado 196
+
+
+Estado 145
+
+   91 CHAMADA_FUNCAO: STRCPY_IDENT token_abreParen token_fechaParen .
+
+    $padrão  reduzir usando a regra 91 (CHAMADA_FUNCAO)
+
+
+Estado 146
+
+   75 ARG: ARG . token_virg $@5 VALOR VERIFICA_VAR_DECLARADA
+   90 CHAMADA_FUNCAO: STRCPY_IDENT token_abreParen ARG . $@7 token_fechaParen
+
+    token_virg  deslocar, e ir ao estado 190
+
+    $padrão  reduzir usando a regra 89 ($@7)
+
+    $@7  ir ao estado 206
+
+
+Estado 147
+
+  157 OP_INCR: TK_IDENT $@17 token_increment .
+
+    $padrão  reduzir usando a regra 157 (OP_INCR)
+
+
+Estado 148
+
+  159 OP_INCR: TK_IDENT $@18 token_decrement .
+
+    $padrão  reduzir usando a regra 159 (OP_INCR)
+
+
+Estado 149
+
+    5 BLOCO: DECL_VAR MAIS_FUNCOES $@1 BLOCO_MAIN .
+
+    $padrão  reduzir usando a regra 5 (BLOCO)
+
+
+Estado 150
+
+   18 LISTA_VAR: LISTA_VAR REC_IDENT token_dois_pt TIPO . COD1 token_pt_virg
+
+    $padrão  reduzir usando a regra 20 (COD1)
+
+    COD1  ir ao estado 207
+
+
+Estado 151
+
+   96 T_MAT: token_colchete_abre . token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@8 token_colchete_fecha
+   97      | token_colchete_abre . token_vlr_inteiro SALVAR_M token_colchete_fecha
+
+    token_vlr_inteiro  deslocar, e ir ao estado 208
+
+
+Estado 152
+
+   94 MATRIZ: token_matriz T_MAT . token_de TIPO_PRIM
+
+    token_de  deslocar, e ir ao estado 209
+
+
+Estado 153
+
+   19 LISTA_VAR: REC_IDENT token_dois_pt TIPO COD1 . token_pt_virg
+
+    token_pt_virg  deslocar, e ir ao estado 210
+
+
+Estado 154
+
+   33 PARAMETROS: token_abreParen token_fechaParen .
+
+    $padrão  reduzir usando a regra 33 (PARAMETROS)
+
+
+Estado 155
+
+   35 LISTA_PARAM: token_ident . INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+
+    $padrão  reduzir usando a regra 36 (INSERE_VAR_LISTAPARAM)
+
+    INSERE_VAR_LISTAPARAM  ir ao estado 211
+
+
+Estado 156
+
+   32 PARAMETROS: token_abreParen LISTA_PARAM . token_fechaParen
+   34 LISTA_PARAM: LISTA_PARAM . token_virg token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+
+    token_fechaParen  deslocar, e ir ao estado 212
+    token_virg        deslocar, e ir ao estado 213
+
+
+Estado 157
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt . TIPO INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC
+   27          | token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt . TIPO INSERE_FUNC_TAB token_pt_virg
+
+    token_char     deslocar, e ir ao estado 95
+    token_string   deslocar, e ir ao estado 96
+    token_matriz   deslocar, e ir ao estado 97
+    token_boolean  deslocar, e ir ao estado 98
+    token_int      deslocar, e ir ao estado 99
+    token_real     deslocar, e ir ao estado 100
+
+    TIPO       ir ao estado 214
+    MATRIZ     ir ao estado 102
+    TIPO_PRIM  ir ao estado 103
+
+
+Estado 158
+
+   26 DECL_FUNC: token_proc token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB . token_pt_virg BLOCO_FUNC
+   28          | token_proc token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB . token_pt_virg
+
+    token_pt_virg  deslocar, e ir ao estado 215
+
+
+Estado 159
+
+   38 LISTA_CMD: LISTA_CMD . CMD
+   46 CMD_IF: token_if EXPRESSAO token_then LISTA_CMD . token_then_end
+   47       | token_if EXPRESSAO token_then LISTA_CMD . token_then_end token_else LISTA_CMD token_else_end
+
+    token_if        deslocar, e ir ao estado 22
+    token_do        deslocar, e ir ao estado 23
+    token_for       deslocar, e ir ao estado 25
+    token_then_end  deslocar, e ir ao estado 216
+    token_repeat    deslocar, e ir ao estado 26
+    token_return    deslocar, e ir ao estado 27
+    token_while     deslocar, e ir ao estado 28
+    token_print     deslocar, e ir ao estado 29
+    token_read      deslocar, e ir ao estado 30
+    token_central   deslocar, e ir ao estado 31
+    token_minimo    deslocar, e ir ao estado 32
+    token_maximo    deslocar, e ir ao estado 33
+    token_ident     deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 160
+
+  146 TK_VLR_NUM: token_menos token_vlr_inteiro .
+
+    $padrão  reduzir usando a regra 146 (TK_VLR_NUM)
+
+
+Estado 161
+
+  148 TK_VLR_NUM: token_menos token_vlr_real .
+
+    $padrão  reduzir usando a regra 148 (TK_VLR_NUM)
+
+
+Estado 162
+
+  130 TERMO: token_abreParen EXPRESSAO . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 217
+
+
+Estado 163
+
+  160 OP_COMPARATIVO: token_maior .
+
+    $padrão  reduzir usando a regra 160 (OP_COMPARATIVO)
+
+
+Estado 164
+
+  161 OP_COMPARATIVO: token_maior_igual .
+
+    $padrão  reduzir usando a regra 161 (OP_COMPARATIVO)
+
+
+Estado 165
+
+  162 OP_COMPARATIVO: token_menor .
+
+    $padrão  reduzir usando a regra 162 (OP_COMPARATIVO)
+
+
+Estado 166
+
+  163 OP_COMPARATIVO: token_menor_igual .
+
+    $padrão  reduzir usando a regra 163 (OP_COMPARATIVO)
+
+
+Estado 167
+
+  164 OP_COMPARATIVO: token_igual .
+
+    $padrão  reduzir usando a regra 164 (OP_COMPARATIVO)
+
+
+Estado 168
+
+  165 OP_COMPARATIVO: token_diferente .
+
+    $padrão  reduzir usando a regra 165 (OP_COMPARATIVO)
+
+
+Estado 169
+
+  109 EXPRESSAO_ARIT: EXPRESSAO_ARIT token_pot . EXPR
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    EXPR            ir ao estado 218
+    FATOR           ir ao estado 118
+    TERMO           ir ao estado 119
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 170
+
+  106 EXPRESSAO: RESETA_PILHAS EXPRESSAO_ARIT OP_COMPARATIVO . EXPRESSAO_ARIT
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    EXPRESSAO_ARIT  ir ao estado 219
+    EXPR            ir ao estado 117
+    FATOR           ir ao estado 118
+    TERMO           ir ao estado 119
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 171
+
+  118 EXPR: EXPR token_and . $@12 VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 117 ($@12)
+
+    $@12  ir ao estado 220
+
+
+Estado 172
+
+  114 EXPR: EXPR token_div . $@10 VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 113 ($@10)
+
+    $@10  ir ao estado 221
+
+
+Estado 173
+
+  112 EXPR: EXPR token_mult . $@9 VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 111 ($@9)
+
+    $@9  ir ao estado 222
+
+
+Estado 174
+
+  116 EXPR: EXPR token_mod . $@11 VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 115 ($@11)
+
+    $@11  ir ao estado 223
+
+
+Estado 175
+
+  126 FATOR: FATOR token_or . $@15 VERIFICACAO_OP TERMO
+
+    $padrão  reduzir usando a regra 125 ($@15)
+
+    $@15  ir ao estado 224
+
+
+Estado 176
+
+  122 FATOR: FATOR token_mais . $@13 VERIFICACAO_OP TERMO
+
+    $padrão  reduzir usando a regra 121 ($@13)
+
+    $@13  ir ao estado 225
+
+
+Estado 177
+
+  124 FATOR: FATOR token_menos . $@14 VERIFICACAO_OP TERMO
+
+    $padrão  reduzir usando a regra 123 ($@14)
+
+    $@14  ir ao estado 226
+
+
+Estado 178
+
+  127 FATOR: TERMO VERIFICACAO_TERMOS .
+
+    $padrão  reduzir usando a regra 127 (FATOR)
+
+
+Estado 179
+
+  149 MULTIPLOS_NOT: MULTIPLOS_NOT token_not .
+
+    $padrão  reduzir usando a regra 149 (MULTIPLOS_NOT)
+
+
+Estado 180
+
+  134 TERMO: MULTIPLOS_NOT token_abreParen . EXPRESSAO token_fechaParen
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    EXPRESSAO      ir ao estado 227
+    RESETA_PILHAS  ir ao estado 68
+
+
+Estado 181
+
+  151 TK_VLR_BOOL: MULTIPLOS_NOT token_true .
+
+    $padrão  reduzir usando a regra 151 (TK_VLR_BOOL)
+
+
+Estado 182
+
+  152 TK_VLR_BOOL: MULTIPLOS_NOT token_false .
+
+    $padrão  reduzir usando a regra 152 (TK_VLR_BOOL)
+
+
+Estado 183
+
+  155 TK_VLR_BOOL: MULTIPLOS_NOT TK_IDENT .
+
+    $padrão  reduzir usando a regra 155 (TK_VLR_BOOL)
+
+
+Estado 184
+
+   48 CMD_DO_WHILE: token_do LISTA_CMD token_do_end token_while . EXPRESSAO
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    EXPRESSAO      ir ao estado 228
+    RESETA_PILHAS  ir ao estado 68
+
+
+Estado 185
+
+   58 IDENT_OU_INT: token_menos . token_vlr_inteiro
+
+    token_vlr_inteiro  deslocar, e ir ao estado 198
+
+
+Estado 186
+
+   52 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT . token_ate IDENT_OU_INT token_do LISTA_CMD token_for_end
+   53        | token_for TK_IDENT token_de IDENT_OU_INT . token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end
+   54        | token_for TK_IDENT token_de IDENT_OU_INT . token_ate IDENT_OU_INT token_do token_for_end
+   55        | token_for TK_IDENT token_de IDENT_OU_INT . token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do token_for_end
+
+    token_ate  deslocar, e ir ao estado 229
+
+
+Estado 187
+
+   49 CMD_REPEAT: token_repeat LISTA_CMD token_ate EXPRESSAO .
+
+    $padrão  reduzir usando a regra 49 (CMD_REPEAT)
+
+
+Estado 188
+
+   51 CMD_WHILE: token_while EXPRESSAO token_do token_while_end .
+
+    $padrão  reduzir usando a regra 51 (CMD_WHILE)
+
+
+Estado 189
+
+   38 LISTA_CMD: LISTA_CMD . CMD
+   50 CMD_WHILE: token_while EXPRESSAO token_do LISTA_CMD . token_while_end
+
+    token_if         deslocar, e ir ao estado 22
+    token_do         deslocar, e ir ao estado 23
+    token_while_end  deslocar, e ir ao estado 230
+    token_for        deslocar, e ir ao estado 25
+    token_repeat     deslocar, e ir ao estado 26
+    token_return     deslocar, e ir ao estado 27
+    token_while      deslocar, e ir ao estado 28
+    token_print      deslocar, e ir ao estado 29
+    token_read       deslocar, e ir ao estado 30
+    token_central    deslocar, e ir ao estado 31
+    token_minimo     deslocar, e ir ao estado 32
+    token_maximo     deslocar, e ir ao estado 33
+    token_ident      deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 190
+
+   75 ARG: ARG token_virg . $@5 VALOR VERIFICA_VAR_DECLARADA
+
+    $padrão  reduzir usando a regra 74 ($@5)
+
+    $@5  ir ao estado 231
+
+
+Estado 191
+
+   73 CMD_IMPRIMA: token_print token_abreParen ARG $@4 . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 232
+
+
+Estado 192
+
+  143 TK_VLR_LITERAL: token_vlr_char .
+
+    $padrão  reduzir usando a regra 143 (TK_VLR_LITERAL)
+
+
+Estado 193
+
+  144 TK_VLR_LITERAL: token_vlr_string .
+
+    $padrão  reduzir usando a regra 144 (TK_VLR_LITERAL)
+
+
+Estado 194
+
+   77 ARG: $@6 VALOR . VERIFICA_VAR_DECLARADA
+
+    $padrão  reduzir usando a regra 78 (VERIFICA_VAR_DECLARADA)
+
+    VERIFICA_VAR_DECLARADA  ir ao estado 233
+
+
+Estado 195
+
+  104 VALOR: EXPRESSAO .
+
+    $padrão  reduzir usando a regra 104 (VALOR)
+
+
+Estado 196
+
+  105 VALOR: TK_VLR_LITERAL .
+
+    $padrão  reduzir usando a regra 105 (VALOR)
+
+
+Estado 197
+
+   80 CMD_LEIA: token_read token_abreParen token_ident token_fechaParen .
+
+    $padrão  reduzir usando a regra 80 (CMD_LEIA)
+
+
+Estado 198
+
+   58 IDENT_OU_INT: token_menos token_vlr_inteiro .
+
+    $padrão  reduzir usando a regra 58 (IDENT_OU_INT)
+
+
+Estado 199
+
+   84 IDENT_OU_NUM: token_menos token_vlr_real .
+
+    $padrão  reduzir usando a regra 84 (IDENT_OU_NUM)
+
+
+Estado 200
+
+   81 CMD_CENTRAL: token_central token_abreParen IDENT_OU_NUM token_virg . IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen
+
+    token_menos        deslocar, e ir ao estado 133
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_vlr_real     deslocar, e ir ao estado 135
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 136
+    IDENT_OU_NUM  ir ao estado 234
+    TK_IDENT      ir ao estado 138
+
+
+Estado 201
+
+   85 CMD_MINIMO: token_minimo token_abreParen IDENT_OU_NUM token_virg . IDENT_OU_NUM token_fechaParen
+
+    token_menos        deslocar, e ir ao estado 133
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_vlr_real     deslocar, e ir ao estado 135
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 136
+    IDENT_OU_NUM  ir ao estado 235
+    TK_IDENT      ir ao estado 138
+
+
+Estado 202
+
+   86 CMD_MAXIMO: token_maximo token_abreParen IDENT_OU_NUM token_virg . IDENT_OU_NUM token_fechaParen
+
+    token_menos        deslocar, e ir ao estado 133
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_vlr_real     deslocar, e ir ao estado 135
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 136
+    IDENT_OU_NUM  ir ao estado 236
+    TK_IDENT      ir ao estado 138
+
+
+Estado 203
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro . SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@16 token_colchete_fecha
+  142           | token_colchete_abre token_vlr_inteiro . SALVAR_M token_colchete_fecha
+
+    $padrão  reduzir usando a regra 98 (SALVAR_M)
+
+    SALVAR_M  ir ao estado 237
+
+
+Estado 204
+
+  137 TK_IDENT: token_ident PILHA_IDENT TAM_MATRIZ VERIFICA_LIM_MAT .
+
+    $padrão  reduzir usando a regra 137 (TK_IDENT)
+
+
+Estado 205
+
+   69 ATRIB: IDENTS $@3 token_atrib VALOR .
+
+    $padrão  reduzir usando a regra 69 (ATRIB)
+
+
+Estado 206
+
+   90 CHAMADA_FUNCAO: STRCPY_IDENT token_abreParen ARG $@7 . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 238
+
+
+Estado 207
+
+   18 LISTA_VAR: LISTA_VAR REC_IDENT token_dois_pt TIPO COD1 . token_pt_virg
+
+    token_pt_virg  deslocar, e ir ao estado 239
+
+
+Estado 208
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro . SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@8 token_colchete_fecha
+   97      | token_colchete_abre token_vlr_inteiro . SALVAR_M token_colchete_fecha
+
+    $padrão  reduzir usando a regra 98 (SALVAR_M)
+
+    SALVAR_M  ir ao estado 240
+
+
+Estado 209
+
+   94 MATRIZ: token_matriz T_MAT token_de . TIPO_PRIM
+
+    token_char     deslocar, e ir ao estado 95
+    token_string   deslocar, e ir ao estado 96
+    token_boolean  deslocar, e ir ao estado 98
+    token_int      deslocar, e ir ao estado 99
+    token_real     deslocar, e ir ao estado 100
+
+    TIPO_PRIM  ir ao estado 241
+
+
+Estado 210
+
+   19 LISTA_VAR: REC_IDENT token_dois_pt TIPO COD1 token_pt_virg .
+
+    $padrão  reduzir usando a regra 19 (LISTA_VAR)
+
+
+Estado 211
+
+   35 LISTA_PARAM: token_ident INSERE_VAR_LISTAPARAM . token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+
+    token_dois_pt  deslocar, e ir ao estado 242
+
+
+Estado 212
+
+   32 PARAMETROS: token_abreParen LISTA_PARAM token_fechaParen .
+
+    $padrão  reduzir usando a regra 32 (PARAMETROS)
+
+
+Estado 213
+
+   34 LISTA_PARAM: LISTA_PARAM token_virg . token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+
+    token_ident  deslocar, e ir ao estado 243
+
+
+Estado 214
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO . INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC
+   27          | token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO . INSERE_FUNC_TAB token_pt_virg
+
+    $padrão  reduzir usando a regra 30 (INSERE_FUNC_TAB)
+
+    INSERE_FUNC_TAB  ir ao estado 244
+
+
+Estado 215
+
+   26 DECL_FUNC: token_proc token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg . BLOCO_FUNC
+   28          | token_proc token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg .
+
+    token_var     deslocar, e ir ao estado 7
+    token_inicio  deslocar, e ir ao estado 10
+
+    $padrão  reduzir usando a regra 28 (DECL_FUNC)
+
+    BLOCO_MAIN  ir ao estado 245
+    DECL_VAR    ir ao estado 246
+    BLOCO_FUNC  ir ao estado 247
+
+
+Estado 216
+
+   46 CMD_IF: token_if EXPRESSAO token_then LISTA_CMD token_then_end .
+   47       | token_if EXPRESSAO token_then LISTA_CMD token_then_end . token_else LISTA_CMD token_else_end
+
+    token_else  deslocar, e ir ao estado 248
+
+    $padrão  reduzir usando a regra 46 (CMD_IF)
+
+
+Estado 217
+
+  130 TERMO: token_abreParen EXPRESSAO token_fechaParen .
+
+    $padrão  reduzir usando a regra 130 (TERMO)
+
+
+Estado 218
+
+  109 EXPRESSAO_ARIT: EXPRESSAO_ARIT token_pot EXPR .
+  112 EXPR: EXPR . token_mult $@9 VERIFICACAO_OP FATOR
+  114     | EXPR . token_div $@10 VERIFICACAO_OP FATOR
+  116     | EXPR . token_mod $@11 VERIFICACAO_OP FATOR
+  118     | EXPR . token_and $@12 VERIFICACAO_OP FATOR
+
+    token_and   deslocar, e ir ao estado 171
+    token_div   deslocar, e ir ao estado 172
+    token_mult  deslocar, e ir ao estado 173
+    token_mod   deslocar, e ir ao estado 174
+
+    $padrão  reduzir usando a regra 109 (EXPRESSAO_ARIT)
+
+
+Estado 219
+
+  106 EXPRESSAO: RESETA_PILHAS EXPRESSAO_ARIT OP_COMPARATIVO EXPRESSAO_ARIT .
+  109 EXPRESSAO_ARIT: EXPRESSAO_ARIT . token_pot EXPR
+
+    token_pot  deslocar, e ir ao estado 169
+
+    $padrão  reduzir usando a regra 106 (EXPRESSAO)
+
+
+Estado 220
+
+  118 EXPR: EXPR token_and $@12 . VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 120 (VERIFICACAO_OP)
+
+    VERIFICACAO_OP  ir ao estado 249
+
+
+Estado 221
+
+  114 EXPR: EXPR token_div $@10 . VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 120 (VERIFICACAO_OP)
+
+    VERIFICACAO_OP  ir ao estado 250
+
+
+Estado 222
+
+  112 EXPR: EXPR token_mult $@9 . VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 120 (VERIFICACAO_OP)
+
+    VERIFICACAO_OP  ir ao estado 251
+
+
+Estado 223
+
+  116 EXPR: EXPR token_mod $@11 . VERIFICACAO_OP FATOR
+
+    $padrão  reduzir usando a regra 120 (VERIFICACAO_OP)
+
+    VERIFICACAO_OP  ir ao estado 252
+
+
+Estado 224
+
+  126 FATOR: FATOR token_or $@15 . VERIFICACAO_OP TERMO
+
+    $padrão  reduzir usando a regra 120 (VERIFICACAO_OP)
+
+    VERIFICACAO_OP  ir ao estado 253
+
+
+Estado 225
+
+  122 FATOR: FATOR token_mais $@13 . VERIFICACAO_OP TERMO
+
+    $padrão  reduzir usando a regra 120 (VERIFICACAO_OP)
+
+    VERIFICACAO_OP  ir ao estado 254
+
+
+Estado 226
+
+  124 FATOR: FATOR token_menos $@14 . VERIFICACAO_OP TERMO
+
+    $padrão  reduzir usando a regra 120 (VERIFICACAO_OP)
+
+    VERIFICACAO_OP  ir ao estado 255
+
+
+Estado 227
+
+  134 TERMO: MULTIPLOS_NOT token_abreParen EXPRESSAO . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 256
+
+
+Estado 228
+
+   48 CMD_DO_WHILE: token_do LISTA_CMD token_do_end token_while EXPRESSAO .
+
+    $padrão  reduzir usando a regra 48 (CMD_DO_WHILE)
+
+
+Estado 229
+
+   52 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate . IDENT_OU_INT token_do LISTA_CMD token_for_end
+   53        | token_for TK_IDENT token_de IDENT_OU_INT token_ate . IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end
+   54        | token_for TK_IDENT token_de IDENT_OU_INT token_ate . IDENT_OU_INT token_do token_for_end
+   55        | token_for TK_IDENT token_de IDENT_OU_INT token_ate . IDENT_OU_INT token_passo IDENT_OU_INT token_do token_for_end
+
+    token_menos        deslocar, e ir ao estado 185
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 257
+    TK_IDENT      ir ao estado 138
+
+
+Estado 230
+
+   50 CMD_WHILE: token_while EXPRESSAO token_do LISTA_CMD token_while_end .
+
+    $padrão  reduzir usando a regra 50 (CMD_WHILE)
+
+
+Estado 231
+
+   75 ARG: ARG token_virg $@5 . VALOR VERIFICA_VAR_DECLARADA
+
+    token_vlr_char    deslocar, e ir ao estado 192
+    token_vlr_string  deslocar, e ir ao estado 193
+
+    $padrão  reduzir usando a regra 108 (RESETA_PILHAS)
+
+    VALOR           ir ao estado 258
+    EXPRESSAO       ir ao estado 195
+    RESETA_PILHAS   ir ao estado 68
+    TK_VLR_LITERAL  ir ao estado 196
+
+
+Estado 232
+
+   73 CMD_IMPRIMA: token_print token_abreParen ARG $@4 token_fechaParen .
+
+    $padrão  reduzir usando a regra 73 (CMD_IMPRIMA)
+
+
+Estado 233
+
+   77 ARG: $@6 VALOR VERIFICA_VAR_DECLARADA .
+
+    $padrão  reduzir usando a regra 77 (ARG)
+
+
+Estado 234
+
+   81 CMD_CENTRAL: token_central token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM . token_virg IDENT_OU_NUM token_fechaParen
+
+    token_virg  deslocar, e ir ao estado 259
+
+
+Estado 235
+
+   85 CMD_MINIMO: token_minimo token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 260
+
+
+Estado 236
+
+   86 CMD_MAXIMO: token_maximo token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 261
+
+
+Estado 237
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro SALVAR_M . token_colchete_fecha token_colchete_abre token_vlr_inteiro $@16 token_colchete_fecha
+  142           | token_colchete_abre token_vlr_inteiro SALVAR_M . token_colchete_fecha
+
+    token_colchete_fecha  deslocar, e ir ao estado 262
+
+
+Estado 238
+
+   90 CHAMADA_FUNCAO: STRCPY_IDENT token_abreParen ARG $@7 token_fechaParen .
+
+    $padrão  reduzir usando a regra 90 (CHAMADA_FUNCAO)
+
+
+Estado 239
+
+   18 LISTA_VAR: LISTA_VAR REC_IDENT token_dois_pt TIPO COD1 token_pt_virg .
+
+    $padrão  reduzir usando a regra 18 (LISTA_VAR)
+
+
+Estado 240
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro SALVAR_M . token_colchete_fecha token_colchete_abre token_vlr_inteiro $@8 token_colchete_fecha
+   97      | token_colchete_abre token_vlr_inteiro SALVAR_M . token_colchete_fecha
+
+    token_colchete_fecha  deslocar, e ir ao estado 263
+
+
+Estado 241
+
+   94 MATRIZ: token_matriz T_MAT token_de TIPO_PRIM .
+
+    $padrão  reduzir usando a regra 94 (MATRIZ)
+
+
+Estado 242
+
+   35 LISTA_PARAM: token_ident INSERE_VAR_LISTAPARAM token_dois_pt . TIPO INSERE_LISTAPARAM_HASH
+
+    token_char     deslocar, e ir ao estado 95
+    token_string   deslocar, e ir ao estado 96
+    token_matriz   deslocar, e ir ao estado 97
+    token_boolean  deslocar, e ir ao estado 98
+    token_int      deslocar, e ir ao estado 99
+    token_real     deslocar, e ir ao estado 100
+
+    TIPO       ir ao estado 264
+    MATRIZ     ir ao estado 102
+    TIPO_PRIM  ir ao estado 103
+
+
+Estado 243
+
+   34 LISTA_PARAM: LISTA_PARAM token_virg token_ident . INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+
+    $padrão  reduzir usando a regra 36 (INSERE_VAR_LISTAPARAM)
+
+    INSERE_VAR_LISTAPARAM  ir ao estado 265
+
+
+Estado 244
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB . token_pt_virg BLOCO_FUNC
+   27          | token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB . token_pt_virg
+
+    token_pt_virg  deslocar, e ir ao estado 266
+
+
+Estado 245
+
+   24 BLOCO_FUNC: BLOCO_MAIN .
+
+    $padrão  reduzir usando a regra 24 (BLOCO_FUNC)
+
+
+Estado 246
+
+   23 BLOCO_FUNC: DECL_VAR . BLOCO_MAIN
+
+    token_inicio  deslocar, e ir ao estado 10
+
+    BLOCO_MAIN  ir ao estado 267
+
+
+Estado 247
+
+   26 DECL_FUNC: token_proc token_ident STRCPY_FUNC PARAMETROS INSERE_PROC_TAB token_pt_virg BLOCO_FUNC .
+
+    $padrão  reduzir usando a regra 26 (DECL_FUNC)
+
+
+Estado 248
+
+   47 CMD_IF: token_if EXPRESSAO token_then LISTA_CMD token_then_end token_else . LISTA_CMD token_else_end
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 268
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 249
+
+  118 EXPR: EXPR token_and $@12 VERIFICACAO_OP . FATOR
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    FATOR           ir ao estado 269
+    TERMO           ir ao estado 119
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 250
+
+  114 EXPR: EXPR token_div $@10 VERIFICACAO_OP . FATOR
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    FATOR           ir ao estado 270
+    TERMO           ir ao estado 119
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 251
+
+  112 EXPR: EXPR token_mult $@9 VERIFICACAO_OP . FATOR
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    FATOR           ir ao estado 271
+    TERMO           ir ao estado 119
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 252
+
+  116 EXPR: EXPR token_mod $@11 VERIFICACAO_OP . FATOR
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    FATOR           ir ao estado 272
+    TERMO           ir ao estado 119
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 253
+
+  126 FATOR: FATOR token_or $@15 VERIFICACAO_OP . TERMO
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    TERMO           ir ao estado 273
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 254
+
+  122 FATOR: FATOR token_mais $@13 VERIFICACAO_OP . TERMO
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    TERMO           ir ao estado 274
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 255
+
+  124 FATOR: FATOR token_menos $@14 VERIFICACAO_OP . TERMO
+
+    token_not          deslocar, e ir ao estado 108
+    token_menos        deslocar, e ir ao estado 109
+    token_abreParen    deslocar, e ir ao estado 110
+    token_vlr_inteiro  deslocar, e ir ao estado 111
+    token_vlr_real     deslocar, e ir ao estado 112
+    token_true         deslocar, e ir ao estado 113
+    token_false        deslocar, e ir ao estado 114
+    token_ident        deslocar, e ir ao estado 34
+
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 115
+    TERMO           ir ao estado 275
+    TK_IDENT        ir ao estado 120
+    TK_VLR_NUM      ir ao estado 121
+    MULTIPLOS_NOT   ir ao estado 122
+    TK_VLR_BOOL     ir ao estado 123
+    OP_INCR         ir ao estado 124
+
+
+Estado 256
+
+  134 TERMO: MULTIPLOS_NOT token_abreParen EXPRESSAO token_fechaParen .
+
+    $padrão  reduzir usando a regra 134 (TERMO)
+
+
+Estado 257
+
+   52 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT . token_do LISTA_CMD token_for_end
+   53        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT . token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end
+   54        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT . token_do token_for_end
+   55        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT . token_passo IDENT_OU_INT token_do token_for_end
+
+    token_do     deslocar, e ir ao estado 276
+    token_passo  deslocar, e ir ao estado 277
+
+
+Estado 258
+
+   75 ARG: ARG token_virg $@5 VALOR . VERIFICA_VAR_DECLARADA
+
+    $padrão  reduzir usando a regra 78 (VERIFICA_VAR_DECLARADA)
+
+    VERIFICA_VAR_DECLARADA  ir ao estado 278
+
+
+Estado 259
+
+   81 CMD_CENTRAL: token_central token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_virg . IDENT_OU_NUM token_fechaParen
+
+    token_menos        deslocar, e ir ao estado 133
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_vlr_real     deslocar, e ir ao estado 135
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 136
+    IDENT_OU_NUM  ir ao estado 279
+    TK_IDENT      ir ao estado 138
+
+
+Estado 260
+
+   85 CMD_MINIMO: token_minimo token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen .
+
+    $padrão  reduzir usando a regra 85 (CMD_MINIMO)
+
+
+Estado 261
+
+   86 CMD_MAXIMO: token_maximo token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen .
+
+    $padrão  reduzir usando a regra 86 (CMD_MAXIMO)
+
+
+Estado 262
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha . token_colchete_abre token_vlr_inteiro $@16 token_colchete_fecha
+  142           | token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha .
+
+    token_colchete_abre  deslocar, e ir ao estado 280
+
+    $padrão  reduzir usando a regra 142 (TAM_MATRIZ)
+
+
+Estado 263
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha . token_colchete_abre token_vlr_inteiro $@8 token_colchete_fecha
+   97      | token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha .
+
+    token_colchete_abre  deslocar, e ir ao estado 281
+
+    $padrão  reduzir usando a regra 97 (T_MAT)
+
+
+Estado 264
+
+   35 LISTA_PARAM: token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO . INSERE_LISTAPARAM_HASH
+
+    $padrão  reduzir usando a regra 37 (INSERE_LISTAPARAM_HASH)
+
+    INSERE_LISTAPARAM_HASH  ir ao estado 282
+
+
+Estado 265
+
+   34 LISTA_PARAM: LISTA_PARAM token_virg token_ident INSERE_VAR_LISTAPARAM . token_dois_pt TIPO INSERE_LISTAPARAM_HASH
+
+    token_dois_pt  deslocar, e ir ao estado 283
+
+
+Estado 266
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg . BLOCO_FUNC
+   27          | token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg .
+
+    token_var     deslocar, e ir ao estado 7
+    token_inicio  deslocar, e ir ao estado 10
+
+    $padrão  reduzir usando a regra 27 (DECL_FUNC)
+
+    BLOCO_MAIN  ir ao estado 245
+    DECL_VAR    ir ao estado 246
+    BLOCO_FUNC  ir ao estado 284
+
+
+Estado 267
+
+   23 BLOCO_FUNC: DECL_VAR BLOCO_MAIN .
+
+    $padrão  reduzir usando a regra 23 (BLOCO_FUNC)
+
+
+Estado 268
+
+   38 LISTA_CMD: LISTA_CMD . CMD
+   47 CMD_IF: token_if EXPRESSAO token_then LISTA_CMD token_then_end token_else LISTA_CMD . token_else_end
+
+    token_if        deslocar, e ir ao estado 22
+    token_do        deslocar, e ir ao estado 23
+    token_for       deslocar, e ir ao estado 25
+    token_else_end  deslocar, e ir ao estado 285
+    token_repeat    deslocar, e ir ao estado 26
+    token_return    deslocar, e ir ao estado 27
+    token_while     deslocar, e ir ao estado 28
+    token_print     deslocar, e ir ao estado 29
+    token_read      deslocar, e ir ao estado 30
+    token_central   deslocar, e ir ao estado 31
+    token_minimo    deslocar, e ir ao estado 32
+    token_maximo    deslocar, e ir ao estado 33
+    token_ident     deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 269
+
+  118 EXPR: EXPR token_and $@12 VERIFICACAO_OP FATOR .
+  122 FATOR: FATOR . token_mais $@13 VERIFICACAO_OP TERMO
+  124      | FATOR . token_menos $@14 VERIFICACAO_OP TERMO
+  126      | FATOR . token_or $@15 VERIFICACAO_OP TERMO
+
+    token_or     deslocar, e ir ao estado 175
+    token_mais   deslocar, e ir ao estado 176
+    token_menos  deslocar, e ir ao estado 177
+
+    $padrão  reduzir usando a regra 118 (EXPR)
+
+
+Estado 270
+
+  114 EXPR: EXPR token_div $@10 VERIFICACAO_OP FATOR .
+  122 FATOR: FATOR . token_mais $@13 VERIFICACAO_OP TERMO
+  124      | FATOR . token_menos $@14 VERIFICACAO_OP TERMO
+  126      | FATOR . token_or $@15 VERIFICACAO_OP TERMO
+
+    token_or     deslocar, e ir ao estado 175
+    token_mais   deslocar, e ir ao estado 176
+    token_menos  deslocar, e ir ao estado 177
+
+    $padrão  reduzir usando a regra 114 (EXPR)
+
+
+Estado 271
+
+  112 EXPR: EXPR token_mult $@9 VERIFICACAO_OP FATOR .
+  122 FATOR: FATOR . token_mais $@13 VERIFICACAO_OP TERMO
+  124      | FATOR . token_menos $@14 VERIFICACAO_OP TERMO
+  126      | FATOR . token_or $@15 VERIFICACAO_OP TERMO
+
+    token_or     deslocar, e ir ao estado 175
+    token_mais   deslocar, e ir ao estado 176
+    token_menos  deslocar, e ir ao estado 177
+
+    $padrão  reduzir usando a regra 112 (EXPR)
+
+
+Estado 272
+
+  116 EXPR: EXPR token_mod $@11 VERIFICACAO_OP FATOR .
+  122 FATOR: FATOR . token_mais $@13 VERIFICACAO_OP TERMO
+  124      | FATOR . token_menos $@14 VERIFICACAO_OP TERMO
+  126      | FATOR . token_or $@15 VERIFICACAO_OP TERMO
+
+    token_or     deslocar, e ir ao estado 175
+    token_mais   deslocar, e ir ao estado 176
+    token_menos  deslocar, e ir ao estado 177
+
+    $padrão  reduzir usando a regra 116 (EXPR)
+
+
+Estado 273
+
+  126 FATOR: FATOR token_or $@15 VERIFICACAO_OP TERMO .
+
+    $padrão  reduzir usando a regra 126 (FATOR)
+
+
+Estado 274
+
+  122 FATOR: FATOR token_mais $@13 VERIFICACAO_OP TERMO .
+
+    $padrão  reduzir usando a regra 122 (FATOR)
+
+
+Estado 275
+
+  124 FATOR: FATOR token_menos $@14 VERIFICACAO_OP TERMO .
+
+    $padrão  reduzir usando a regra 124 (FATOR)
+
+
+Estado 276
+
+   52 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do . LISTA_CMD token_for_end
+   54        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do . token_for_end
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_for_end  deslocar, e ir ao estado 286
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 287
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 277
+
+   53 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo . IDENT_OU_INT token_do LISTA_CMD token_for_end
+   55        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo . IDENT_OU_INT token_do token_for_end
+
+    token_menos        deslocar, e ir ao estado 185
+    token_vlr_inteiro  deslocar, e ir ao estado 134
+    token_ident        deslocar, e ir ao estado 70
+
+    IDENT_OU_INT  ir ao estado 288
+    TK_IDENT      ir ao estado 138
+
+
+Estado 278
+
+   75 ARG: ARG token_virg $@5 VALOR VERIFICA_VAR_DECLARADA .
+
+    $padrão  reduzir usando a regra 75 (ARG)
+
+
+Estado 279
+
+   81 CMD_CENTRAL: token_central token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_virg IDENT_OU_NUM . token_fechaParen
+
+    token_fechaParen  deslocar, e ir ao estado 289
+
+
+Estado 280
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre . token_vlr_inteiro $@16 token_colchete_fecha
+
+    token_vlr_inteiro  deslocar, e ir ao estado 290
+
+
+Estado 281
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre . token_vlr_inteiro $@8 token_colchete_fecha
+
+    token_vlr_inteiro  deslocar, e ir ao estado 291
+
+
+Estado 282
+
+   35 LISTA_PARAM: token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH .
+
+    $padrão  reduzir usando a regra 35 (LISTA_PARAM)
+
+
+Estado 283
+
+   34 LISTA_PARAM: LISTA_PARAM token_virg token_ident INSERE_VAR_LISTAPARAM token_dois_pt . TIPO INSERE_LISTAPARAM_HASH
+
+    token_char     deslocar, e ir ao estado 95
+    token_string   deslocar, e ir ao estado 96
+    token_matriz   deslocar, e ir ao estado 97
+    token_boolean  deslocar, e ir ao estado 98
+    token_int      deslocar, e ir ao estado 99
+    token_real     deslocar, e ir ao estado 100
+
+    TIPO       ir ao estado 292
+    MATRIZ     ir ao estado 102
+    TIPO_PRIM  ir ao estado 103
+
+
+Estado 284
+
+   25 DECL_FUNC: token_func token_ident STRCPY_FUNC PARAMETROS token_dois_pt TIPO INSERE_FUNC_TAB token_pt_virg BLOCO_FUNC .
+
+    $padrão  reduzir usando a regra 25 (DECL_FUNC)
+
+
+Estado 285
+
+   47 CMD_IF: token_if EXPRESSAO token_then LISTA_CMD token_then_end token_else LISTA_CMD token_else_end .
+
+    $padrão  reduzir usando a regra 47 (CMD_IF)
+
+
+Estado 286
+
+   54 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do token_for_end .
+
+    $padrão  reduzir usando a regra 54 (CMD_FOR)
+
+
+Estado 287
+
+   38 LISTA_CMD: LISTA_CMD . CMD
+   52 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do LISTA_CMD . token_for_end
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_for_end  deslocar, e ir ao estado 293
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 288
+
+   53 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT . token_do LISTA_CMD token_for_end
+   55        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT . token_do token_for_end
+
+    token_do  deslocar, e ir ao estado 294
+
+
+Estado 289
+
+   81 CMD_CENTRAL: token_central token_abreParen IDENT_OU_NUM token_virg IDENT_OU_NUM token_virg IDENT_OU_NUM token_fechaParen .
+
+    $padrão  reduzir usando a regra 81 (CMD_CENTRAL)
+
+
+Estado 290
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro . $@16 token_colchete_fecha
+
+    $padrão  reduzir usando a regra 140 ($@16)
+
+    $@16  ir ao estado 295
+
+
+Estado 291
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro . $@8 token_colchete_fecha
+
+    $padrão  reduzir usando a regra 95 ($@8)
+
+    $@8  ir ao estado 296
+
+
+Estado 292
+
+   34 LISTA_PARAM: LISTA_PARAM token_virg token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO . INSERE_LISTAPARAM_HASH
+
+    $padrão  reduzir usando a regra 37 (INSERE_LISTAPARAM_HASH)
+
+    INSERE_LISTAPARAM_HASH  ir ao estado 297
+
+
+Estado 293
+
+   52 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_do LISTA_CMD token_for_end .
+
+    $padrão  reduzir usando a regra 52 (CMD_FOR)
+
+
+Estado 294
+
+   53 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do . LISTA_CMD token_for_end
+   55        | token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do . token_for_end
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_for_end  deslocar, e ir ao estado 298
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    LISTA_CMD       ir ao estado 299
+    CMD             ir ao estado 36
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 295
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@16 . token_colchete_fecha
+
+    token_colchete_fecha  deslocar, e ir ao estado 300
+
+
+Estado 296
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@8 . token_colchete_fecha
+
+    token_colchete_fecha  deslocar, e ir ao estado 301
+
+
+Estado 297
+
+   34 LISTA_PARAM: LISTA_PARAM token_virg token_ident INSERE_VAR_LISTAPARAM token_dois_pt TIPO INSERE_LISTAPARAM_HASH .
+
+    $padrão  reduzir usando a regra 34 (LISTA_PARAM)
+
+
+Estado 298
+
+   55 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do token_for_end .
+
+    $padrão  reduzir usando a regra 55 (CMD_FOR)
+
+
+Estado 299
+
+   38 LISTA_CMD: LISTA_CMD . CMD
+   53 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD . token_for_end
+
+    token_if       deslocar, e ir ao estado 22
+    token_do       deslocar, e ir ao estado 23
+    token_for      deslocar, e ir ao estado 25
+    token_for_end  deslocar, e ir ao estado 302
+    token_repeat   deslocar, e ir ao estado 26
+    token_return   deslocar, e ir ao estado 27
+    token_while    deslocar, e ir ao estado 28
+    token_print    deslocar, e ir ao estado 29
+    token_read     deslocar, e ir ao estado 30
+    token_central  deslocar, e ir ao estado 31
+    token_minimo   deslocar, e ir ao estado 32
+    token_maximo   deslocar, e ir ao estado 33
+    token_ident    deslocar, e ir ao estado 34
+
+    CMD             ir ao estado 82
+    CMD_IF          ir ao estado 37
+    CMD_DO_WHILE    ir ao estado 38
+    CMD_REPEAT      ir ao estado 39
+    CMD_WHILE       ir ao estado 40
+    CMD_FOR         ir ao estado 41
+    CMD_SIMPLES     ir ao estado 42
+    ATRIB           ir ao estado 43
+    IDENTS          ir ao estado 44
+    CMD_IMPRIMA     ir ao estado 45
+    CMD_LEIA        ir ao estado 46
+    CMD_CENTRAL     ir ao estado 47
+    CMD_MINIMO      ir ao estado 48
+    CMD_MAXIMO      ir ao estado 49
+    RETURN          ir ao estado 50
+    STRCPY_IDENT    ir ao estado 51
+    CHAMADA_FUNCAO  ir ao estado 52
+    TK_IDENT        ir ao estado 53
+    OP_INCR         ir ao estado 54
+
+
+Estado 300
+
+  141 TAM_MATRIZ: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@16 token_colchete_fecha .
+
+    $padrão  reduzir usando a regra 141 (TAM_MATRIZ)
+
+
+Estado 301
+
+   96 T_MAT: token_colchete_abre token_vlr_inteiro SALVAR_M token_colchete_fecha token_colchete_abre token_vlr_inteiro $@8 token_colchete_fecha .
+
+    $padrão  reduzir usando a regra 96 (T_MAT)
+
+
+Estado 302
+
+   53 CMD_FOR: token_for TK_IDENT token_de IDENT_OU_INT token_ate IDENT_OU_INT token_passo IDENT_OU_INT token_do LISTA_CMD token_for_end .
+
+    $padrão  reduzir usando a regra 53 (CMD_FOR)
